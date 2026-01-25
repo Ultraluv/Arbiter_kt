@@ -76,35 +76,20 @@ class GameViewModel {
                 grid = grid.mutate {
                     val cell = this[action.position]
                     if (cell is RawCell.UnRevealedCell.UnFlaggedCell) {
-                        val rawCell: RawCell = when(modeState.value){
+                        when(modeState.value){
                             ModeState.Flag -> {
-                                cell.asFlagged()
+                                this[action.position] = cell.asFlagged()
                             }
                             ModeState.Click -> {
-                                cell.asRevealed()
-                            }
-                        }
-                        when (cell.cell) {
-                            is MineCell.Mine -> {
-                                when(modeState.value){
-                                    ModeState.Flag -> {
-                                        this[action.position] = rawCell
-                                    }
-                                    ModeState.Click -> {
-                                        this[action.position] = rawCell
+                                when (cell.cell) {
+                                    is MineCell.Mine -> {
+                                        this[action.position] = cell.asRevealed()
                                         gameState = GameState.Defeat
                                     }
-                                }
-                            }
-                            is MineCell.NumberCell.Cell -> {
-                                this[action.position] = rawCell
-                            }
-                            is MineCell.NumberCell.ZeroCell -> {
-                                when(modeState.value){
-                                    ModeState.Flag -> {
-                                        this[action.position] = rawCell
+                                    is MineCell.NumberCell.Cell -> {
+                                        this[action.position] = cell.asRevealed()
                                     }
-                                    ModeState.Click -> {
+                                    is MineCell.NumberCell.ZeroCell -> {
                                         scope.launch {
                                             revalZeroCell(action.position)
                                         }
@@ -120,42 +105,11 @@ class GameViewModel {
                 grid = grid.mutate {
                     val cell = this[action.position]
                     if (cell is RawCell.UnRevealedCell.FlaggedCell) {
-                        val rawCell: RawCell = when(modeState.value){
+                        when(modeState.value){
                             ModeState.Flag -> {
-                                cell.asUnFlagged()
+                                this[action.position] = cell.asUnFlagged()
                             }
-                            ModeState.Click -> {
-                                cell.asUnFlagged()
-                            }
-                        }
-                        when (cell.cell) {
-                            is MineCell.Mine -> {
-                                when(modeState.value){
-                                    ModeState.Flag -> {
-                                        this[action.position] = rawCell
-                                    }
-                                    ModeState.Click -> {
-                                    }
-                                }
-                            }
-                            is MineCell.NumberCell.Cell -> {
-                                when(modeState.value){
-                                    ModeState.Flag -> {
-                                        this[action.position] = rawCell
-                                    }
-                                    ModeState.Click -> {
-                                    }
-                                }
-                            }
-                            is MineCell.NumberCell.ZeroCell -> {
-                                when(modeState.value){
-                                    ModeState.Flag -> {
-                                        this[action.position] = rawCell
-                                    }
-                                    ModeState.Click -> {
-                                    }
-                                }
-                            }
+                            ModeState.Click -> {}
                         }
                     }
                 }
