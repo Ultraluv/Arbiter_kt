@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ultraluv.arbiter.AppIcon
 import com.ultraluv.arbiter.MyIconPack
+import com.ultraluv.arbiter.canvasIconPath.FlagCanvasIcon
 import com.ultraluv.arbiter.loadIcon
 import com.ultraluv.arbiter.myiconpack.Flag24dp
 
@@ -49,7 +51,7 @@ fun FlaggedCell(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(painter = loadIcon(AppIcon.Flag), contentDescription = "Flag")
+//            Icon(painter = loadIcon(AppIcon.Flag), contentDescription = "Flag")
 
 //            Icon(
 //                imageVector = MyIconPack.Flag24dp,
@@ -66,19 +68,12 @@ fun FlaggedCell(
 //            ){
 //                Text("P")
 //            }
+
+            FlagCanvasIcon(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(cellSizeDp * 0.2f)
+            )
         }
     }
-
-//    FloatingActionButton(
-//        onClick = {},
-//        modifier = Modifier
-//            .size(cellSizeDp)
-//            .padding(2.dp)
-//            .onePointClick(
-//                onClick = onClick
-//            ),
-//        containerColor = Color.Yellow,
-//    ){
-//        Icon(painter = loadIcon(AppIcon.Flag), contentDescription = "Flag")
-//    }
 }

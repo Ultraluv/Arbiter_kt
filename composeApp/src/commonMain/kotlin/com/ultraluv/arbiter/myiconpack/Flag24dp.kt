@@ -16,7 +16,7 @@ public val MyIconPack.Flag24dp: ImageVector
         if (_flag24dp != null) {
             return _flag24dp!!
         }
-        _flag24dp = Builder(name = "Flag24dp", defaultWidth = 192.0.dp, defaultHeight = 192.0.dp,
+        _flag24dp = Builder(name = "Flag24dp", defaultWidth = 24.0.dp, defaultHeight = 24.0.dp,
                 viewportWidth = 960.0f, viewportHeight = 960.0f).apply {
             path(fill = SolidColor(Color(0xFF1f1f1f)), stroke = null, strokeLineWidth = 0.0f,
                     strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,

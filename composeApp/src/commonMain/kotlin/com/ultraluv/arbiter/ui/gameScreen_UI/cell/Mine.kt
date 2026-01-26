@@ -16,7 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ultraluv.arbiter.AppIcon
+import com.ultraluv.arbiter.MyIconPack
 import com.ultraluv.arbiter.loadIcon
+import com.ultraluv.arbiter.myiconpack.Bomb24dp
 
 @Composable
 fun Mine(
@@ -41,20 +43,14 @@ fun Mine(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(painter = loadIcon(AppIcon.Bomb), contentDescription = "Bomb")
+//            Icon(painter = loadIcon(AppIcon.Bomb), contentDescription = "Bomb")
+
+            Icon(
+                imageVector = MyIconPack.Bomb24dp,
+                modifier = Modifier
+                    .size(cellSizeDp - 2.dp),
+                contentDescription = "Flag"
+            )
         }
     }
-
-//    FloatingActionButton(
-//        onClick = {},
-//        modifier = Modifier
-//            .size(cellSizeDp)
-//            .padding(2.dp)
-//            .onePointClick(
-//                onClick = onClick
-//            ),
-//        containerColor = Color.Red,
-//    ){
-//        Icon(painter = loadIcon(AppIcon.Bomb), contentDescription = "Bomb")
-//    }
 }

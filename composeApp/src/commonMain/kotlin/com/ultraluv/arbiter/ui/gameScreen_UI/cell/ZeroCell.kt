@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -25,7 +26,7 @@ fun ZeroCell(
             .size(cellSizeDp)
             .background(
                 color = Color.Transparent,
-                shape = RoundedCornerShape(10.dp)
+                shape = CircleShape
             )
             .onePointClick(
                 isEnableHaptic = false,
