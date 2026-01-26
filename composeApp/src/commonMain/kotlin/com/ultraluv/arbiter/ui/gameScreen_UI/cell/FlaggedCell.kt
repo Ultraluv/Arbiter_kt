@@ -32,11 +32,12 @@ fun FlaggedCell(
 ) {
     Card(
         modifier = Modifier
-            .size(cellSizeDp),
+            .size(cellSizeDp)
+            .padding(cellSizeDp * 0.02f),
         shape = CircleShape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 1.dp
+            defaultElevation = 0.4.dp,
+            pressedElevation = 0.2.dp
         )
     ) {
         Box(
@@ -51,29 +52,17 @@ fun FlaggedCell(
                 ),
             contentAlignment = Alignment.Center
         ) {
-//            Icon(painter = loadIcon(AppIcon.Flag), contentDescription = "Flag")
-
-//            Icon(
-//                imageVector = MyIconPack.Flag24dp,
-//                modifier = Modifier
-//                    .size(cellSizeDp - 2.dp),
-//                contentDescription = "Flag"
-//            )
-
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .border(1.dp, Color.Black, CircleShape),
-//                contentAlignment = Alignment.Center
-//            ){
-//                Text("P")
-//            }
-
-            FlagCanvasIcon(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(cellSizeDp * 0.2f)
-            )
+                    .border(0.2.dp, Color.Black, CircleShape),
+                contentAlignment = Alignment.Center
+            ){
+                FlagCanvasIcon(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
         }
     }
 }

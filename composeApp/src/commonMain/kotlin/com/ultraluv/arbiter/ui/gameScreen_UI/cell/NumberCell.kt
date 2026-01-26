@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.ultraluv.arbiter.AppIcon
 import com.ultraluv.arbiter.MyIconPack
+import com.ultraluv.arbiter.canvasIconPath.FlagCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.NumberCanvasIcon
 import com.ultraluv.arbiter.loadIcon
 import com.ultraluv.arbiter.myiconpack.Circle24dp
 import com.ultraluv.arbiter.myiconpack.Counter124dp
@@ -57,11 +59,12 @@ fun NumberCell(
 ) {
     Card(
         modifier = Modifier
-            .size(cellSizeDp),
+            .size(cellSizeDp)
+            .padding(cellSizeDp * 0.02f),
         shape = CircleShape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 1.dp
+            defaultElevation = 0.4.dp,
+            pressedElevation = 0.2.dp
         )
     ) {
         Box(
@@ -73,55 +76,18 @@ fun NumberCell(
                 ),
             contentAlignment = Alignment.Center
         ) {
-//            Icon(painter = loadIcon(fromNumber(number)), contentDescription = "Number")
-
-//            Icon(
-//                imageVector = fromNumber(number),
-//                modifier = Modifier
-//                    .size(cellSizeDp - 2.dp),
-//                contentDescription = "Number"
-//            )
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .border(0.2.dp * number, Color.Black, CircleShape),
+                    .border(0.2.dp, Color.Black, CircleShape),
                 contentAlignment = Alignment.Center
             ){
-                Text(
-                    text = "$number",
+                NumberCanvasIcon(
+                    number = number,
                     modifier = Modifier
-                        .padding(1.dp)
+                        .fillMaxSize()
                 )
             }
         }
-    }
-}
-
-//fun fromNumber(number: Int): AppIcon{
-//    return when(number){
-//        1 -> AppIcon.Counter_1
-//        2 -> AppIcon.Counter_2
-//        3 -> AppIcon.Counter_3
-//        4 -> AppIcon.Counter_4
-//        5 -> AppIcon.Counter_5
-//        6 -> AppIcon.Counter_6
-//        7 -> AppIcon.Counter_7
-//        8 -> AppIcon.Counter_8
-//        else -> AppIcon.Zero
-//    }
-//}
-
-fun fromNumber(number: Int): ImageVector {
-    return when(number){
-        1 -> MyIconPack.Counter124dp
-        2 -> MyIconPack.Counter224dp
-        3 -> MyIconPack.Counter324dp
-        4 -> MyIconPack.Counter424dp
-        5 -> MyIconPack.Counter524dp
-        6 -> MyIconPack.Counter624dp
-        7 -> MyIconPack.Counter724dp
-        8 -> MyIconPack.Counter824dp
-        else -> MyIconPack.Circle24dp
     }
 }

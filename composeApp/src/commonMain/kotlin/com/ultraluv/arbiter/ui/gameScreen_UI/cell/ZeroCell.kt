@@ -24,6 +24,7 @@ fun ZeroCell(
     Box(
         modifier = Modifier
             .size(cellSizeDp)
+            .padding(cellSizeDp * 0.02f)
             .background(
                 color = Color.Transparent,
                 shape = CircleShape

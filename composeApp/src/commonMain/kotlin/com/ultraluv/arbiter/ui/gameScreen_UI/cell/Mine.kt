@@ -1,8 +1,10 @@
 package com.ultraluv.arbiter.ui.gameScreen_UI.cell
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -17,6 +19,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ultraluv.arbiter.AppIcon
 import com.ultraluv.arbiter.MyIconPack
+import com.ultraluv.arbiter.canvasIconPath.FlagCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.MineCanvasIcon
 import com.ultraluv.arbiter.loadIcon
 import com.ultraluv.arbiter.myiconpack.Bomb24dp
 
@@ -27,11 +31,12 @@ fun Mine(
 ) {
     Card(
         modifier = Modifier
-            .size(cellSizeDp),
+            .size(cellSizeDp)
+            .padding(cellSizeDp * 0.02f),
         shape = CircleShape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 1.dp
+            defaultElevation = 0.4.dp,
+            pressedElevation = 0.2.dp
         )
     ) {
         Box(
@@ -43,14 +48,17 @@ fun Mine(
                 ),
             contentAlignment = Alignment.Center
         ) {
-//            Icon(painter = loadIcon(AppIcon.Bomb), contentDescription = "Bomb")
-
-            Icon(
-                imageVector = MyIconPack.Bomb24dp,
+            Box(
                 modifier = Modifier
-                    .size(cellSizeDp - 2.dp),
-                contentDescription = "Flag"
-            )
+                    .fillMaxSize()
+                    .border(0.2.dp, Color.Black, CircleShape),
+                contentAlignment = Alignment.Center
+            ){
+                MineCanvasIcon(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
         }
     }
 }

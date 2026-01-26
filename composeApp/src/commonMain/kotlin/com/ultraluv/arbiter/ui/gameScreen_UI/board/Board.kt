@@ -22,7 +22,7 @@ fun Board(
     val coverState = remember {
         mutableStateOf(
             CoverState(
-                scale = 1f,
+                scale = 2f,
                 translationX = 0f,
                 translationY = 0f,
             )
