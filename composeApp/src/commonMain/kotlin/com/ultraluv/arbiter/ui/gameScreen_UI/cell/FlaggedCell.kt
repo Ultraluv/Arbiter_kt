@@ -1,27 +1,84 @@
 package com.ultraluv.arbiter.ui.gameScreen_UI.cell
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ultraluv.arbiter.AppIcon
+import com.ultraluv.arbiter.MyIconPack
+import com.ultraluv.arbiter.loadIcon
+import com.ultraluv.arbiter.myiconpack.Flag24dp
 
 @Composable
 fun FlaggedCell(
     cellSizeDp: Dp,
     onClick: () -> Unit,
 ) {
-    Box(
+    Card(
         modifier = Modifier
-            .size(cellSizeDp)
-            .padding(2.dp)
-            .background(Color.Yellow)
-            .onePointClick(
-                onClick = onClick
-            )
-    )
+            .size(cellSizeDp),
+        shape = CircleShape,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 1.dp
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = Color.Yellow,
+                    shape = CircleShape
+                )
+                .onePointClick(
+                    onClick = onClick
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(painter = loadIcon(AppIcon.Flag), contentDescription = "Flag")
+
+//            Icon(
+//                imageVector = MyIconPack.Flag24dp,
+//                modifier = Modifier
+//                    .size(cellSizeDp - 2.dp),
+//                contentDescription = "Flag"
+//            )
+
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .border(1.dp, Color.Black, CircleShape),
+//                contentAlignment = Alignment.Center
+//            ){
+//                Text("P")
+//            }
+        }
+    }
+
+//    FloatingActionButton(
+//        onClick = {},
+//        modifier = Modifier
+//            .size(cellSizeDp)
+//            .padding(2.dp)
+//            .onePointClick(
+//                onClick = onClick
+//            ),
+//        containerColor = Color.Yellow,
+//    ){
+//        Icon(painter = loadIcon(AppIcon.Flag), contentDescription = "Flag")
+//    }
 }

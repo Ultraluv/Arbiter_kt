@@ -36,7 +36,9 @@ fun TopBar(
             modifier = Modifier
                 .wrapContentSize(),
             onClick = {
-                onRePlay()
+                if(gameState == GameState.Victory || gameState == GameState.Defeat){
+                    onRePlay()
+                }
             }
         ){
             val modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
