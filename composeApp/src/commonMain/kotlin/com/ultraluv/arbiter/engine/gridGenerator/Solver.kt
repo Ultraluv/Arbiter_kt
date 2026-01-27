@@ -7,6 +7,7 @@ import com.ultraluv.arbiter.engine.model.cell.RawCell
 import com.ultraluv.arbiter.engine.model.grid.Grid
 import com.ultraluv.arbiter.engine.model.grid.impl.MutableMineGrid
 import com.ultraluv.arbiter.engine.util.mutate
+import kotlin.collections.plusAssign
 
 object Solver {
     fun isSolvable(grid: Grid, starCell: Position): Boolean {
@@ -33,7 +34,7 @@ object Solver {
 
                 for (row in currentRow - 1..currentRow + 1) {
                     for (col in currentCol - 1..currentCol + 1) {
-                        val currentPosition = Position(row,col)
+                        val currentPosition = Position(row, col)
                         val cell = this.getOrNull(currentPosition)
                         if (cell != null && cell is RawCell.UnRevealedCell.UnFlaggedCell) {
                             revalZeroCell(currentPosition)
@@ -44,21 +45,15 @@ object Solver {
         }
     }
 
-    fun MutableMineGrid.solver(): Boolean{
-        var changedInRound: Boolean
-
-        do {
-            changedInRound = false
-
-            if (!oneSet()) changedInRound = true
-            if (changedInRound) continue
-
-            if (!twoSet()) changedInRound = true
-            if (changedInRound) continue
-
-            if (!threeSet()) changedInRound = true
-        } while (changedInRound)
-
+    fun MutableMineGrid.solver(): Boolean {
+        while (true) {
+            val oneSetNullSolveCheck = this.oneSet()
+            val twoSetNullSolveCheck = this.twoSet()
+            val threeSetNullSolveCheck = this.threeSet()
+            if (oneSetNullSolveCheck && twoSetNullSolveCheck && threeSetNullSolveCheck) {
+                break
+            }
+        }
         return this.isOrNoComplete()
     }
 
@@ -71,10 +66,11 @@ object Solver {
 
         cells.forEach { row ->
             row.forEach { cell ->
-                when(cell){
+                when (cell) {
                     is RawCell.RevealedCell -> revealedCellNum = revealedCellNum.plus(1)
                     is RawCell.UnRevealedCell.FlaggedCell -> flaggedCellNum = flaggedCellNum.plus(1)
-                    is RawCell.UnRevealedCell.UnFlaggedCell -> unFlaggedCellNum = unFlaggedCellNum.plus(1)
+                    is RawCell.UnRevealedCell.UnFlaggedCell -> unFlaggedCellNum =
+                        unFlaggedCellNum.plus(1)
                 }
             }
         }
@@ -94,15 +90,16 @@ object Solver {
                 for (col in 0 until gridSize.cols) {
                     val position = Position(row, col)
 
-                    when(val cell = this[position]){
+                    when (val cell = this[position]) {
                         is RawCell.UnRevealedCell.UnFlaggedCell -> continue
                         is RawCell.UnRevealedCell.FlaggedCell -> continue
                         is RawCell.RevealedCell -> {
-                            when(val mineCell = cell.cell){
+                            when (val mineCell = cell.cell) {
                                 is MineCell.Mine -> continue
                                 is MineCell.NumberCell.ZeroCell -> {
                                     revalZeroCell(position)
                                 }
+
                                 is MineCell.NumberCell.Cell -> {
                                     val neighbors = mineCell.position.neighbors(gridSize)
 
@@ -125,7 +122,8 @@ object Solver {
                                         unRevealed
                                             .filter { it.second is RawCell.UnRevealedCell.UnFlaggedCell }
                                             .forEach { (position, rawCell) ->
-                                                this[position] = (rawCell as RawCell.UnRevealedCell.UnFlaggedCell).asFlagged()
+                                                this[position] =
+                                                    (rawCell as RawCell.UnRevealedCell.UnFlaggedCell).asFlagged()
                                                 changed = true
                                                 check = false
                                             }
@@ -138,7 +136,8 @@ object Solver {
                                         unRevealed
                                             .filter { it.second is RawCell.UnRevealedCell.UnFlaggedCell }
                                             .forEach { (position, rawCell) ->
-                                                this[position] = (rawCell as RawCell.UnRevealedCell.UnFlaggedCell).asRevealed()
+                                                this[position] =
+                                                    (rawCell as RawCell.UnRevealedCell.UnFlaggedCell).asRevealed()
                                                 changed = true
                                                 check = false
                                             }
@@ -162,18 +161,7 @@ object Solver {
         do {
             changed = false
 
-            val numberCells = mutableListOf<Pair<Position, MineCell.NumberCell>>()
-
-            for (row in 0 until gridSize.rows) {
-                for (col in 0 until gridSize.cols) {
-                    val position = Position(row, col)
-                    val cell = this[position]
-
-                    if (cell is RawCell.RevealedCell && cell.cell is MineCell.NumberCell.Cell) {
-                        numberCells += position to cell.cell
-                    }
-                }
-            }
+            val numberCells = getRevealedNumberCells()
 
             for (i in numberCells.indices) {
                 for (j in i + 1 until numberCells.size) {
@@ -181,30 +169,14 @@ object Solver {
                     val (posA, cellA) = numberCells[i]
                     val (posB, cellB) = numberCells[j]
 
-                    if (kotlin.math.abs(posA.row - posB.row) > 2 ||
-                        kotlin.math.abs(posA.col - posB.col) > 2
-                    ) continue
+                    if (!isNear(posA, posB)) continue
 
-                    val neighborsA = posA.neighbors(gridSize)
-                    val neighborsB = posB.neighbors(gridSize)
+                    val unFlaggedA = posA.neighbors(gridSize).filterUnflagged(this)
 
-                    val unFlaggedA = neighborsA
-                        .filter { this[it] is RawCell.UnRevealedCell.UnFlaggedCell }
-                        .toSet()
+                    val unFlaggedB = posB.neighbors(gridSize).filterUnflagged(this)
 
-                    val unFlaggedB = neighborsB
-                        .filter { this[it] is RawCell.UnRevealedCell.UnFlaggedCell }
-                        .toSet()
-
-                    val flaggedA = neighborsA.count {
-                        this[it] is RawCell.UnRevealedCell.FlaggedCell
-                    }
-                    val flaggedB = neighborsB.count {
-                        this[it] is RawCell.UnRevealedCell.FlaggedCell
-                    }
-
-                    val remainA = cellA.number - flaggedA
-                    val remainB = cellB.number - flaggedB
+                    val remainA = cellA.number - posA.neighbors(gridSize).countFlagged(this)
+                    val remainB = cellB.number - posB.neighbors(gridSize).countFlagged(this)
 
                     changed = applyTwoSetRule(
                         unFlaggedA, unFlaggedB,
@@ -234,7 +206,11 @@ object Solver {
                         val (posB, cellB) = numberCells[j]
                         val (posC, cellC) = numberCells[k]
 
-                        if (!isNear(posA, posB) || !isNear(posB, posC) || !isNear(posA, posC)) continue
+                        if (!isNear(posA, posB) || !isNear(posB, posC) || !isNear(
+                                posA,
+                                posC
+                            )
+                        ) continue
 
                         val unFlaggedA = posA.neighbors(gridSize).filterUnflagged(this)
                         val unFlaggedB = posB.neighbors(gridSize).filterUnflagged(this)
@@ -264,10 +240,12 @@ object Solver {
                     row if currentCol == col -> {
                         null
                     }
+
                     in 0 until gridSize.rows if currentCol in 0 until gridSize.cols -> Position(
                         currentRow,
                         currentCol
                     )
+
                     else -> null
                 }
             }
@@ -333,6 +311,7 @@ object Solver {
         return false
     }
 
+    // to do
     private fun MutableMineGrid.applyThreeSetRules(
         setA: Set<Position>, setB: Set<Position>, setC: Set<Position>,
         rA: Int, rB: Int, rC: Int
@@ -351,21 +330,21 @@ object Solver {
             // if (b_I >= a_I + c_I && b_I - a_I - c_I == x_I)
             if (rB >= rA + rC && (rB - rA - rC) == xSet.size) {
                 var anyChanged = false
-                xSet.forEach { if(markAsFlagged(it)) anyChanged = true }
-                vSet.forEach { if(markAsRevealed(it)) anyChanged = true }
-                zSet.forEach { if(markAsRevealed(it)) anyChanged = true }
+                xSet.forEach { if (markAsFlagged(it)) anyChanged = true }
+                vSet.forEach { if (markAsRevealed(it)) anyChanged = true }
+                zSet.forEach { if (markAsRevealed(it)) anyChanged = true }
                 return anyChanged
             }
 
             // if (a_I + c_I >= b_I && a_I + c_I - b_I == v_I + z_I)
             if (rA + rC >= rB && (rA + rC - rB) == (vSet.size + zSet.size)) {
                 var anyChanged = false
-                vSet.forEach { if(markAsFlagged(it)) anyChanged = true }
-                zSet.forEach { if(markAsFlagged(it)) anyChanged = true }
-                xSet.forEach { if(markAsRevealed(it)) anyChanged = true }
+                vSet.forEach { if (markAsFlagged(it)) anyChanged = true }
+                zSet.forEach { if (markAsFlagged(it)) anyChanged = true }
+                xSet.forEach { if (markAsRevealed(it)) anyChanged = true }
                 return anyChanged
             }
-        }else if (intersectAB.isNotEmpty() && intersectBC.isNotEmpty()) {
+        } else if (intersectAB.isNotEmpty() && intersectBC.isNotEmpty()) {
             val coreABC = intersectAB intersect setC // 三者公共交集区域 (x_I 在 C 代码 B 逻辑中)
 
             if (coreABC.isNotEmpty() && coreABC.size < setA.size) {
@@ -382,12 +361,12 @@ object Solver {
                 if (rB == rA + rC && rB > 0) {
                     var anyChanged = false
 
-                    onlyA.forEach { if(markAsFlagged(it)) anyChanged = true }
-                    onlyC.forEach { if(markAsFlagged(it)) anyChanged = true }
+                    onlyA.forEach { if (markAsFlagged(it)) anyChanged = true }
+                    onlyC.forEach { if (markAsFlagged(it)) anyChanged = true }
 
-                    onlyAB.forEach { if(markAsFlagged(it)) anyChanged = true }
-                    onlyBC.forEach { if(markAsFlagged(it)) anyChanged = true }
-                    coreABC.forEach { if(markAsFlagged(it)) anyChanged = true }
+                    onlyAB.forEach { if (markAsFlagged(it)) anyChanged = true }
+                    onlyBC.forEach { if (markAsFlagged(it)) anyChanged = true }
+                    coreABC.forEach { if (markAsFlagged(it)) anyChanged = true }
 
                     if (anyChanged) return true
                 }
@@ -396,11 +375,11 @@ object Solver {
                 val outerSum = onlyA.size + coreABC.size + onlyC.size
                 if (rA + rC - rB == outerSum && outerSum > 0) {
                     var anyChanged = false
-                    onlyA.forEach { if(markAsFlagged(it)) anyChanged = true }
-                    coreABC.forEach { if(markAsFlagged(it)) anyChanged = true }
-                    onlyC.forEach { if(markAsFlagged(it)) anyChanged = true }
+                    onlyA.forEach { if (markAsFlagged(it)) anyChanged = true }
+                    coreABC.forEach { if (markAsFlagged(it)) anyChanged = true }
+                    onlyC.forEach { if (markAsFlagged(it)) anyChanged = true }
 
-                    onlyB.forEach { if(markAsRevealed(it)) anyChanged = true }
+                    onlyB.forEach { if (markAsRevealed(it)) anyChanged = true }
                     return anyChanged
                 }
             }
@@ -408,8 +387,11 @@ object Solver {
         return false
     }
 
-    private fun List<Position>.filterUnflagged(grid: Grid) = this.filter { grid[it] is RawCell.UnRevealedCell.UnFlaggedCell }.toSet()
-    private fun List<Position>.countFlagged(grid: Grid) = this.count { grid[it] is RawCell.UnRevealedCell.FlaggedCell }
+    private fun List<Position>.filterUnflagged(grid: Grid) =
+        this.filter { grid[it] is RawCell.UnRevealedCell.UnFlaggedCell }.toSet()
+
+    private fun List<Position>.countFlagged(grid: Grid) =
+        this.count { grid[it] is RawCell.UnRevealedCell.FlaggedCell }
 
     private fun MutableMineGrid.markAsFlagged(pos: Position): Boolean {
         val cell = this[pos]
@@ -432,16 +414,18 @@ object Solver {
     private fun isNear(p1: Position, p2: Position) =
         kotlin.math.abs(p1.row - p2.row) <= 2 && kotlin.math.abs(p1.col - p2.col) <= 2
 
-    private fun MutableMineGrid.getRevealedNumberCells(): List<Pair<Position, MineCell.NumberCell.Cell>> {
-        val list = mutableListOf<Pair<Position, MineCell.NumberCell.Cell>>()
-        for (r in 0 until gridSize.rows) {
-            for (c in 0 until gridSize.cols) {
-                val cell = this[Position(r, c)]
+    private fun MutableMineGrid.getRevealedNumberCells(): MutableList<Pair<Position, MineCell.NumberCell>> {
+        val numberCells = mutableListOf<Pair<Position, MineCell.NumberCell>>()
+        for (row in 0 until gridSize.rows) {
+            for (col in 0 until gridSize.cols) {
+                val position = Position(row, col)
+                val cell = this[position]
+
                 if (cell is RawCell.RevealedCell && cell.cell is MineCell.NumberCell.Cell) {
-                    list.add(Position(r, c) to cell.cell)
+                    numberCells += position to cell.cell
                 }
             }
         }
-        return list
+        return numberCells
     }
 }
