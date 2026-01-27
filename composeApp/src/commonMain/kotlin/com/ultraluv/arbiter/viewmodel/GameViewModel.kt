@@ -190,7 +190,7 @@ class GameViewModel {
             val revealed = cell.asRevealed()
             this[position] = revealed
 
-            delay(20L)
+            delay(40L)
 
             grid = this
             _gameUIState.value = _gameUIState.value.copy(
@@ -232,11 +232,11 @@ class GameViewModel {
         )
     }
 
-    fun onToClickMode() {
-        _modeState.value = ModeState.Click
-    }
-
-    fun onToFlagMode() {
-        _modeState.value = ModeState.Flag
+    fun onChangeMode() {
+        if (_modeState.value == ModeState.Flag) {
+            _modeState.value = ModeState.Click
+        } else{
+            _modeState.value = ModeState.Flag
+        }
     }
 }

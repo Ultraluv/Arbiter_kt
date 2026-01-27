@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -14,10 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ultraluv.arbiter.AppIcon
 import com.ultraluv.arbiter.engine.model.base.GridSize
 import com.ultraluv.arbiter.game.GameState
-import com.ultraluv.arbiter.loadIcon
 import com.ultraluv.arbiter.ui.gameScreen_UI.board.Board
 import com.ultraluv.arbiter.ui.gameScreen_UI.bottomBar_UI.BottomBar
 import com.ultraluv.arbiter.ui.gameScreen_UI.topBar_UI.TopBar
@@ -33,6 +30,7 @@ fun GameScreen(
 ){
     val gameViewModel = remember { GameViewModel() }
     val gameUIState by gameViewModel.gameUIState
+    val modeState by gameViewModel.modeState
 
     Scaffold(
         topBar = {
@@ -51,11 +49,10 @@ fun GameScreen(
         },
         bottomBar = {
             BottomBar(
-                onToClickMode = {
-                    gameViewModel.onToClickMode()
-                },
-                onToFlagMode = {
-                    gameViewModel.onToFlagMode()
+                navigationViewModel = navigationViewModel,
+                modeState = modeState,
+                onChangeMode = {
+                    gameViewModel.onChangeMode()
                 }
             )
         }

@@ -1,25 +1,32 @@
 package com.ultraluv.arbiter.ui.gameScreen_UI.bottomBar_UI
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ultraluv.arbiter.AppIcon
-import com.ultraluv.arbiter.loadIcon
+import com.ultraluv.arbiter.canvasIconPath.BackCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.ClickCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.FlagCanvasIcon
+import com.ultraluv.arbiter.mode.ModeState
+import com.ultraluv.arbiter.viewmodel.NavigationViewModel
 
 @Composable
 fun BottomBar(
-    onToClickMode: () -> Unit,
-    onToFlagMode: () -> Unit,
+    navigationViewModel: NavigationViewModel,
+    modeState: ModeState,
+    onChangeMode: () -> Unit,
 ){
     Box(
         modifier = Modifier
@@ -34,26 +41,50 @@ fun BottomBar(
             horizontalArrangement = Arrangement.spacedBy(50.dp)
         ) {
             FloatingActionButton(
-                modifier = Modifier
-                    .wrapContentSize(),
                 onClick = {
-                    onToClickMode()
+                    navigationViewModel.onBack()
                 }
             ){
-                Column {
-                    Icon(painter = loadIcon(AppIcon.Click), contentDescription = "Click")
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                ){
+                    BackCanvasIcon(
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
                 }
             }
-
             FloatingActionButton(
                 modifier = Modifier
                     .wrapContentSize(),
                 onClick = {
-                    onToFlagMode()
+                    onChangeMode()
                 }
             ){
-                Column {
-                    Icon(painter = loadIcon(AppIcon.Flag), contentDescription = "Flag")
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                ){
+                    AnimatedContent(
+                        targetState = modeState,
+                        label = "modeState"
+                    ){ state ->
+                        when(state){
+                            ModeState.Click -> {
+                                ClickCanvasIcon(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                )
+                            }
+                            ModeState.Flag -> {
+                                FlagCanvasIcon(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

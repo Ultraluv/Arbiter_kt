@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,8 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpwheelpicker.WheelPicker
 import com.swmansion.kmpwheelpicker.rememberWheelPickerState
-import com.ultraluv.arbiter.AppIcon
-import com.ultraluv.arbiter.loadIcon
+import com.ultraluv.arbiter.canvasIconPath.BackCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.SettingCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.StartCanvasIcon
 import com.ultraluv.arbiter.picker.PickGuess
 import com.ultraluv.arbiter.picker.PickGuessState
 import com.ultraluv.arbiter.picker.PickLevel
@@ -131,8 +132,14 @@ fun HomeScreen(
                             navigationViewModel.onBack()
                         }
                     ){
-                        Column {
-                            Icon(painter = loadIcon(AppIcon.Back), contentDescription = "Back")
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                        ){
+                            BackCanvasIcon(
+                                modifier = Modifier
+                                    .size(24.dp)
+                            )
                         }
                     }
                     FloatingActionButton(
@@ -141,8 +148,14 @@ fun HomeScreen(
                             navigationViewModel.startGame()
                         }
                     ){
-                        Column {
-                            Icon(painter = loadIcon(AppIcon.Start), contentDescription = "Start")
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                        ){
+                            StartCanvasIcon(
+                                modifier = Modifier
+                                    .size(24.dp)
+                            )
                         }
                     }
                     FloatingActionButton(
@@ -150,8 +163,14 @@ fun HomeScreen(
                             navigationViewModel.openSetting()
                         }
                     ){
-                        Column {
-                            Icon(painter = loadIcon(AppIcon.Setting), contentDescription = "Setting")
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                        ){
+                            SettingCanvasIcon(
+                                modifier = Modifier
+                                    .size(24.dp)
+                            )
                         }
                     }
                 }
