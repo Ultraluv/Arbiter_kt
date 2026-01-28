@@ -322,13 +322,16 @@ object Solver {
 
         if (intersectAB.isNotEmpty() && intersectBC.isNotEmpty() && intersectAC.isEmpty()) {
             val vSet = setA - intersectAB
-            //val wSet = intersectAB
+            val wSet = intersectAB
             val xSet = setB - intersectAB - intersectBC
-            //val ySet = intersectBC
+            val ySet = intersectBC
             val zSet = setC - intersectBC
 
+            // Raw
+            // if (((b_I >= a_I + c_I && a_I + c_I > 0) && (b_I - a_I - c_I == x_I) || ((a_I + c_I >= b_I && b_I > 0) && (a_I + c_I - b_I == v_I + z_I))) && (v_I + z_I != 0))
+
             // if (b_I >= a_I + c_I && b_I - a_I - c_I == x_I)
-            if (rB >= rA + rC && (rB - rA - rC) == xSet.size) {
+            if ((rB >= rA + rC && (rB - rA - rC) == xSet.size) && (vSet.size + zSet.size) > 0) {
                 var anyChanged = false
                 xSet.forEach { if (markAsFlagged(it)) anyChanged = true }
                 vSet.forEach { if (markAsRevealed(it)) anyChanged = true }
@@ -337,7 +340,7 @@ object Solver {
             }
 
             // if (a_I + c_I >= b_I && a_I + c_I - b_I == v_I + z_I)
-            if (rA + rC >= rB && (rA + rC - rB) == (vSet.size + zSet.size)) {
+            if ((rA + rC >= rB && rB >0) && (rA + rC - rB) == (vSet.size + zSet.size) && (vSet.size + zSet.size) > 0) {
                 var anyChanged = false
                 vSet.forEach { if (markAsFlagged(it)) anyChanged = true }
                 zSet.forEach { if (markAsFlagged(it)) anyChanged = true }
@@ -351,7 +354,7 @@ object Solver {
 
                 val onlyAB = intersectAB - coreABC // 仅 A, B 相交
                 val onlyBC = intersectBC - coreABC // 仅 B, C 相交
-                //val onlyAC = intersectAC - coreABC // 仅 A, C 相交
+                val onlyAC = intersectAC - coreABC // 仅 A, C 相交
 
                 val onlyA = setA - intersectAB - intersectAC // 仅 A 独有
                 val onlyB = setB - intersectAB - intersectBC // 仅 B 独有
