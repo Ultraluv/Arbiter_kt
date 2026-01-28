@@ -12,7 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ultraluv.arbiter.canvasIconPath.BackCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.AnimateBaseCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.IconPathData
 import com.ultraluv.arbiter.viewmodel.NavigationViewModel
 
 @Composable
@@ -39,9 +40,10 @@ fun SettingScreen(
                     modifier = Modifier
                         .wrapContentSize()
                 ){
-                    BackCanvasIcon(
+                    AnimateBaseCanvasIcon(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(24.dp),
+                        iconPathData = IconPathData.Back
                     )
                 }
             }

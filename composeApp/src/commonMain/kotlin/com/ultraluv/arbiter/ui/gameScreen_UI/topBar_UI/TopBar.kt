@@ -13,7 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ultraluv.arbiter.canvasIconPath.RePlayCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.BaseCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.IconPathData
 import com.ultraluv.arbiter.game.GameState
 
 @Composable
@@ -59,9 +60,10 @@ fun TopBar(
                         modifier = Modifier
                             .wrapContentSize()
                     ){
-                        RePlayCanvasIcon(
+                        BaseCanvasIcon(
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(24.dp),
+                            iconPathData = IconPathData.RePlay
                         )
                     }
                 }
@@ -70,9 +72,10 @@ fun TopBar(
                         modifier = Modifier
                             .wrapContentSize()
                     ){
-                        RePlayCanvasIcon(
+                        BaseCanvasIcon(
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(24.dp),
+                            iconPathData = IconPathData.RePlay
                         )
                     }
                 }

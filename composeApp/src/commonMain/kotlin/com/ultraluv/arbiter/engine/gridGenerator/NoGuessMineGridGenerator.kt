@@ -24,6 +24,8 @@ class NoGuessMineGridGenerator : GridGenerator {
             if (Solver.isSolvable(grid, starCell)) {
                 return@withContext grid
             }
+
+            println("Failed to generate grid after $it attempts")
         }
 
         error("Failed to generate no-guess grid after $maxAttempts attempts")

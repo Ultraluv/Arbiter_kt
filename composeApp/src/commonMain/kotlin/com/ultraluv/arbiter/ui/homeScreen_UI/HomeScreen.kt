@@ -26,9 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpwheelpicker.WheelPicker
 import com.swmansion.kmpwheelpicker.rememberWheelPickerState
-import com.ultraluv.arbiter.canvasIconPath.BackCanvasIcon
-import com.ultraluv.arbiter.canvasIconPath.SettingCanvasIcon
-import com.ultraluv.arbiter.canvasIconPath.StartCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.AnimateBaseCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.BaseCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.IconPathData
 import com.ultraluv.arbiter.picker.PickGuess
 import com.ultraluv.arbiter.picker.PickGuessState
 import com.ultraluv.arbiter.picker.PickLevel
@@ -136,9 +136,10 @@ fun HomeScreen(
                             modifier = Modifier
                                 .wrapContentSize()
                         ){
-                            BackCanvasIcon(
+                            AnimateBaseCanvasIcon(
                                 modifier = Modifier
-                                    .size(24.dp)
+                                    .size(24.dp),
+                                iconPathData = IconPathData.Back
                             )
                         }
                     }
@@ -152,9 +153,10 @@ fun HomeScreen(
                             modifier = Modifier
                                 .wrapContentSize()
                         ){
-                            StartCanvasIcon(
+                            BaseCanvasIcon(
                                 modifier = Modifier
-                                    .size(24.dp)
+                                    .size(24.dp),
+                                iconPathData = IconPathData.Start
                             )
                         }
                     }
@@ -167,9 +169,10 @@ fun HomeScreen(
                             modifier = Modifier
                                 .wrapContentSize()
                         ){
-                            SettingCanvasIcon(
+                            BaseCanvasIcon(
                                 modifier = Modifier
-                                    .size(24.dp)
+                                    .size(24.dp),
+                                iconPathData = IconPathData.Setting
                             )
                         }
                     }

@@ -16,7 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ultraluv.arbiter.canvasIconPath.NumberCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.BaseCanvasIcon
+import com.ultraluv.arbiter.canvasIconPath.IconPathData
 
 @Suppress("UnusedBoxWithConstraintsScope")
 @Composable
@@ -50,10 +51,10 @@ fun NumberCell(
                     .border(0.2.dp, Color.Black, CircleShape),
                 contentAlignment = Alignment.Center
             ){
-                NumberCanvasIcon(
-                    number = number,
+                BaseCanvasIcon(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    iconPathData = IconPathData.Number(number)
                 )
             }
         }
