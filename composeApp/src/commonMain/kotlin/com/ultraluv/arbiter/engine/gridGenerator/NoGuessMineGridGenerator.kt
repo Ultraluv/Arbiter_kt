@@ -4,6 +4,7 @@ import com.ultraluv.arbiter.engine.model.base.GridSize
 import com.ultraluv.arbiter.engine.model.base.Position
 import com.ultraluv.arbiter.engine.model.grid.Grid
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 class NoGuessMineGridGenerator : GridGenerator {
@@ -15,6 +16,8 @@ class NoGuessMineGridGenerator : GridGenerator {
         val maxAttempts = 10_000
 
         repeat(maxAttempts) {
+            ensureActive()
+
             val grid = MineGridGenerator().generateGrid(
                 gridSize = gridSize,
                 starCell = starCell,

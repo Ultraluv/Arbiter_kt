@@ -32,12 +32,12 @@ sealed interface PickLevelState {
             Hard -> PickLevel(
                 level = "Hard",
                 gridSize = GridSize(30, 16),
-                mineCount = 99
+                mineCount = 50 // 99
             )
             Extreme -> PickLevel(
                 level = "Extreme",
                 gridSize = GridSize(30, 30),
-                mineCount = 200
+                mineCount = 90 // 200
             )
         }
     }

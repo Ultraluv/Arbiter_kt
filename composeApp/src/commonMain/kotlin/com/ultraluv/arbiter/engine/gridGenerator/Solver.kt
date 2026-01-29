@@ -122,8 +122,7 @@ object Solver {
                                         unRevealed
                                             .filter { it.second is RawCell.UnRevealedCell.UnFlaggedCell }
                                             .forEach { (position, rawCell) ->
-                                                this[position] =
-                                                    (rawCell as RawCell.UnRevealedCell.UnFlaggedCell).asFlagged()
+                                                markAsFlagged(position)
                                                 changed = true
                                                 check = false
                                             }
@@ -136,8 +135,7 @@ object Solver {
                                         unRevealed
                                             .filter { it.second is RawCell.UnRevealedCell.UnFlaggedCell }
                                             .forEach { (position, rawCell) ->
-                                                this[position] =
-                                                    (rawCell as RawCell.UnRevealedCell.UnFlaggedCell).asRevealed()
+                                                markAsRevealed(position)
                                                 changed = true
                                                 check = false
                                             }
@@ -290,20 +288,14 @@ object Solver {
 
         if (remainSuper - remainSub == different.size && remainSuper > remainSub) {
             different.forEach { position ->
-                val cell = this[position]
-                if (cell is RawCell.UnRevealedCell.UnFlaggedCell) {
-                    this[position] = cell.asFlagged()
-                }
+                markAsFlagged(position)
             }
             return true
         }
 
         if (remainSuper == remainSub) {
             different.forEach { position ->
-                val cell = this[position]
-                if (cell is RawCell.UnRevealedCell.UnFlaggedCell) {
-                    this[position] = cell.asRevealed()
-                }
+                markAsRevealed(position)
             }
             return true
         }
@@ -311,7 +303,6 @@ object Solver {
         return false
     }
 
-    // to do
     private fun MutableMineGrid.applyThreeSetRules(
         setA: Set<Position>, setB: Set<Position>, setC: Set<Position>,
         rA: Int, rB: Int, rC: Int
@@ -320,6 +311,7 @@ object Solver {
         val intersectBC = setB intersect setC
         val intersectAC = setA intersect setC
 
+        // ThrSet A
         if (intersectAB.isNotEmpty() && intersectBC.isNotEmpty() && intersectAC.isEmpty()) {
             val vSet = setA - intersectAB
             val wSet = intersectAB
@@ -328,10 +320,8 @@ object Solver {
             val zSet = setC - intersectBC
 
             // Raw
-            // if (((b_I >= a_I + c_I && a_I + c_I > 0) && (b_I - a_I - c_I == x_I) || ((a_I + c_I >= b_I && b_I > 0) && (a_I + c_I - b_I == v_I + z_I))) && (v_I + z_I != 0))
-
-            // if (b_I >= a_I + c_I && b_I - a_I - c_I == x_I)
-            if ((rB >= rA + rC && (rB - rA - rC) == xSet.size) && (vSet.size + zSet.size) > 0) {
+            // b_I - a_I - c_I == x_I
+            if ((rB - rA - rC) == xSet.size) {
                 var anyChanged = false
                 xSet.forEach { if (markAsFlagged(it)) anyChanged = true }
                 vSet.forEach { if (markAsRevealed(it)) anyChanged = true }
@@ -339,18 +329,19 @@ object Solver {
                 return anyChanged
             }
 
-            // if (a_I + c_I >= b_I && a_I + c_I - b_I == v_I + z_I)
-            if ((rA + rC >= rB && rB >0) && (rA + rC - rB) == (vSet.size + zSet.size) && (vSet.size + zSet.size) > 0) {
+            // a_I + c_I - b_I == v_I + z_I
+            if (((rA + rC - rB) == (vSet.size + zSet.size))) {
                 var anyChanged = false
                 vSet.forEach { if (markAsFlagged(it)) anyChanged = true }
                 zSet.forEach { if (markAsFlagged(it)) anyChanged = true }
                 xSet.forEach { if (markAsRevealed(it)) anyChanged = true }
                 return anyChanged
             }
-        } else if (intersectAB.isNotEmpty() && intersectBC.isNotEmpty()) {
-            val coreABC = intersectAB intersect setC // 三者公共交集区域 (x_I 在 C 代码 B 逻辑中)
+        } // <Fuck> ThrSet B <Fuck/>
+        else if (intersectAB.isNotEmpty() && intersectBC.isNotEmpty()) {
+            val coreABC = intersectAB intersect setC
 
-            if (coreABC.isNotEmpty() && coreABC.size < setA.size) {
+            if (coreABC.isNotEmpty() ) { // && intersectAC == coreABC) {
 
                 val onlyAB = intersectAB - coreABC // 仅 A, B 相交
                 val onlyBC = intersectBC - coreABC // 仅 B, C 相交
@@ -360,30 +351,29 @@ object Solver {
                 val onlyB = setB - intersectAB - intersectBC // 仅 B 独有
                 val onlyC = setC - intersectAC - intersectBC // 仅 C 独有
 
-                // if (b_I == a_I + c_I)
-                if (rB == rA + rC && rB > 0) {
-                    var anyChanged = false
+                if(onlyB.isEmpty() && onlyA.isNotEmpty() && onlyC.isNotEmpty() && onlyAB.isNotEmpty() && onlyBC.isNotEmpty() && rA > 0 && rB >0 && rC > 0){
+                    // b_I == a_I + c_I
+                    if (rB == rA + rC) {
+                        var anyChanged = false
 
-                    onlyA.forEach { if (markAsFlagged(it)) anyChanged = true }
-                    onlyC.forEach { if (markAsFlagged(it)) anyChanged = true }
+                        onlyA.forEach { if (markAsRevealed(it)) anyChanged = true }
+                        onlyC.forEach { if (markAsRevealed(it)) anyChanged = true }
+                        coreABC.forEach { if (markAsRevealed(it)) anyChanged = true }
 
-                    onlyAB.forEach { if (markAsFlagged(it)) anyChanged = true }
-                    onlyBC.forEach { if (markAsFlagged(it)) anyChanged = true }
-                    coreABC.forEach { if (markAsFlagged(it)) anyChanged = true }
+                        if (anyChanged) return true
+                    }
 
-                    if (anyChanged) return true
-                }
+                    // a_I + c_I - b_I == 外部区域总和
+                    val outerSum = onlyA.size + coreABC.size + onlyC.size
+                    if (rA + rC - rB == outerSum) {
+                        var anyChanged = false
 
-                // a_I + c_I - b_I == 外部区域总和
-                val outerSum = onlyA.size + coreABC.size + onlyC.size
-                if (rA + rC - rB == outerSum && outerSum > 0) {
-                    var anyChanged = false
-                    onlyA.forEach { if (markAsFlagged(it)) anyChanged = true }
-                    coreABC.forEach { if (markAsFlagged(it)) anyChanged = true }
-                    onlyC.forEach { if (markAsFlagged(it)) anyChanged = true }
+                        onlyA.forEach { if (markAsFlagged(it)) anyChanged = true }
+                        coreABC.forEach { if (markAsFlagged(it)) anyChanged = true }
+                        onlyC.forEach { if (markAsFlagged(it)) anyChanged = true }
 
-                    onlyB.forEach { if (markAsRevealed(it)) anyChanged = true }
-                    return anyChanged
+                        return anyChanged
+                    }
                 }
             }
         }
@@ -399,6 +389,9 @@ object Solver {
     private fun MutableMineGrid.markAsFlagged(pos: Position): Boolean {
         val cell = this[pos]
         if (cell is RawCell.UnRevealedCell.UnFlaggedCell) {
+            if(cell.cell !is MineCell.Mine){
+                println("Failed markAsFlagged in cell = $cell")
+            }
             this[pos] = cell.asFlagged()
             return true
         }
@@ -408,6 +401,9 @@ object Solver {
     private fun MutableMineGrid.markAsRevealed(pos: Position): Boolean {
         val cell = this[pos]
         if (cell is RawCell.UnRevealedCell.UnFlaggedCell) {
+            if(cell.cell is MineCell.Mine){
+                println("Failed markAsRevealed in cell = $cell")
+            }
             this[pos] = cell.asRevealed()
             return true
         }

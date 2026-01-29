@@ -22,6 +22,7 @@ import com.ultraluv.arbiter.ui.gameScreen_UI.model.displayGridInformation.Displa
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -238,5 +239,9 @@ class GameViewModel {
         } else{
             _modeState.value = ModeState.Flag
         }
+    }
+
+    fun clear() {
+        scope.cancel()
     }
 }
